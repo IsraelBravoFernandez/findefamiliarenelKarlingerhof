@@ -108,6 +108,7 @@ footer{color:var(--muted);font-size:.85rem;text-align:center;padding:10px 16px 4
     <a href="#comidas">Comidas</a>
     <a href="#compras">Compras</a>
     <a href="#costes">Costes</a>
+    <a href="#gastos">Gastos</a>
     <a href="#contrato">Contrato</a>
     <a href="#reglas">Reglas 2027</a>
   </div>
@@ -303,8 +304,84 @@ footer{color:var(--muted);font-size:.85rem;text-align:center;padding:10px 16px 4
     <tfoot><tr><td>Total familias</td><td class="num">2.878,2 €</td><td class="num">779,3 €</td><td class="num">2.010,3 €</td><td class="num"></td></tr></tfoot>
   </table></div>
   <p class="small"><span class="pill pay">a pagar</span> falta por pagar · <span class="pill back">a devolver</span> se devuelve a la familia · <span class="pill zero">al día</span> nada pendiente. Importes redondeados a un decimal.</p>
+  <div class="note"><b>Por qué algunos saldos no están a cero:</b><ul style="margin:4px 0">
+    <li><b>Neu Sánchez, Benedicto Trueba y Llopart Licht (6,0 € a devolver):</b> en noviembre se pagó la tasa turística de un hijo/a que no la paga. Según el contrato solo pagan los nacidos a partir de 2010, así que se devuelven 2 noches × 3 €.</li>
+    <li><b>Djordjevic (121,1 € a pagar):</b> duermen solo la noche del viernes, pero su habitación queda reservada para nosotros las dos noches, así que la casa y la limpieza final cuentan 2 noches. La tasa turística solo se paga por 1 noche. Para la segunda noche, el grupo les descuenta 57,7 € con lo que sobró del anticipo de la familia Rodrigo (que no viene) y de la caja común.</li>
+  </ul></div>
   <p class="small">Datos bancarios para pagar o recibir la devolución: por mensaje privado a Israel.</p>
 </section>
+
+<section id="gastos">
+  <h2>Gastos compartidos</h2>
+  <p class="lead">Compras y gastos que alguien adelantó para todos. Se reparten por persona y al final se calcula quién paga a quién, con el menor número de transferencias.</p>
+  <div class="grid2" style="margin-bottom:6px">
+    <div class="box"><div class="small">Total gastado</div><b id="g-total" style="font-size:1.3rem">0,00 €</b></div>
+    <div class="box"><div class="small" id="g-unit-label">Por persona</div><b id="g-unit" style="font-size:1.3rem">0,00 €</b></div>
+  </div>
+  <h3>Recibos</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>#</th><th>Concepto</th><th>Pagó</th><th class="num">Importe</th></tr></thead>
+    <tbody id="g-recibos"></tbody>
+  </table></div>
+  <h3>Balance por familia</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Familia</th><th class="num">Pagó</th><th class="num">Le toca</th><th class="num">Saldo</th></tr></thead>
+    <tbody id="g-balance"></tbody>
+  </table></div>
+  <h3>Transferencias para quedar en paz</h3>
+  <div id="g-transfers"></div>
+  <p class="small">Guardad los tiques y dádselos a Israel. Los importes se actualizan aquí a medida que llegan los recibos.</p>
+</section>
+
+<script>
+(function(){
+  var DATA = {"reparto": "persona", "gastos": []};
+  var FAM = [{"fam": "Neu Sanchez", "personas": 2, "noches": 4}, {"fam": "Benedicto Trueba", "personas": 4, "noches": 8}, {"fam": "Bravo Lis", "personas": 4, "noches": 7}, {"fam": "Morera Lafuente", "personas": 4, "noches": 8}, {"fam": "Llopart Licht", "personas": 4, "noches": 8}, {"fam": "Djordjevic", "personas": 4, "noches": 4}, {"fam": "Souto Fernandez", "personas": 2, "noches": 4}, {"fam": "Nieto Deliz", "personas": 3, "noches": 6}];
+  var mode = DATA.reparto || "persona";
+  var fmt = function(x){ return (Math.round(Math.abs(x)*100)/100).toLocaleString("es-ES",{minimumFractionDigits:2,maximumFractionDigits:2}) + " €"; };
+  var esc = function(s){ var d=document.createElement("div"); d.textContent=String(s); return d.innerHTML; };
+  var w = {}, wsum = 0;
+  FAM.forEach(function(f){ w[f.fam] = mode==="familia" ? 1 : (mode==="noches" ? f.noches : f.personas); wsum += w[f.fam]; });
+  var paid = {}; FAM.forEach(function(f){ paid[f.fam]=0; });
+  var total = 0, rows = "";
+  DATA.gastos.forEach(function(g,i){
+    total += g.importe; if (paid[g.pagó]===undefined) paid[g.pagó]=0; paid[g.pagó] += g.importe;
+    rows += "<tr><td>"+(i+1)+"</td><td>"+esc(g.concepto)+"</td><td>"+esc(g.pagó)+"</td><td class='num'>"+fmt(g.importe)+"</td></tr>";
+  });
+  document.getElementById("g-recibos").innerHTML = rows || "<tr><td colspan='4' class='small'>Todavía no hay recibos.</td></tr>";
+  document.getElementById("g-total").textContent = fmt(total);
+  document.getElementById("g-unit-label").textContent = mode==="familia" ? "Por familia" : (mode==="noches" ? "Por noche-persona" : "Por persona");
+  document.getElementById("g-unit").textContent = fmt(wsum ? total/wsum : 0);
+  // saldos en céntimos para evitar errores de redondeo
+  var bal = [], brows = "";
+  FAM.forEach(function(f){
+    var share = wsum ? total*w[f.fam]/wsum : 0, s = paid[f.fam]-share;
+    bal.push({fam:f.fam, c:Math.round(s*100)});
+    var pill = s>0.005 ? "<span class='pill back'>recibe "+fmt(s)+"</span>" : (s<-0.005 ? "<span class='pill pay'>paga "+fmt(s)+"</span>" : "<span class='pill zero'>en paz</span>");
+    brows += "<tr><td>"+esc(f.fam)+"</td><td class='num'>"+fmt(paid[f.fam])+"</td><td class='num'>"+fmt(share)+"</td><td class='num'>"+pill+"</td></tr>";
+  });
+  document.getElementById("g-balance").innerHTML = brows;
+  // ajustar céntimos de redondeo para que la suma sea 0
+  var diff = bal.reduce(function(a,b){return a+b.c;},0);
+  if (diff!==0 && bal.length){ bal.sort(function(a,b){return Math.abs(b.c)-Math.abs(a.c);}); bal[0].c -= diff; }
+  // emparejar deudores y acreedores: el que más debe paga al que más recibe
+  var deu = bal.filter(function(b){return b.c<0;}).map(function(b){return {fam:b.fam,c:-b.c};});
+  var acr = bal.filter(function(b){return b.c>0;}).map(function(b){return {fam:b.fam,c:b.c};});
+  var tr = [];
+  // primero, parejas con el mismo importe exacto (ahorran transferencias)
+  deu.forEach(function(d){ for (var j=0;j<acr.length;j++){ if (acr[j].c>0 && acr[j].c===d.c){ tr.push([d.fam,acr[j].fam,d.c]); acr[j].c=0; d.c=0; break; } } });
+  while (true){
+    deu.sort(function(a,b){return b.c-a.c;}); acr.sort(function(a,b){return b.c-a.c;});
+    if (!deu.length || !acr.length || deu[0].c<=0 || acr[0].c<=0) break;
+    var m = Math.min(deu[0].c, acr[0].c);
+    tr.push([deu[0].fam, acr[0].fam, m]); deu[0].c -= m; acr[0].c -= m;
+  }
+  var out = tr.length ? "<ul class='timeline'>" + tr.map(function(t){
+    return "<li><span class='when'>"+esc(t[0])+"</span><span>paga <b>"+fmt(t[2]/100)+"</b> a <span class='who'>"+esc(t[1])+"</span></span></li>";
+  }).join("") + "</ul>" : "<p class='small'>Todavía no hay nada que liquidar.</p>";
+  document.getElementById("g-transfers").innerHTML = out;
+})();
+</script>
 
 <section id="contrato">
   <h2>Contrato con la casa</h2>
