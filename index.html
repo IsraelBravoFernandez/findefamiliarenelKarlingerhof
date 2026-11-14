@@ -75,6 +75,12 @@ figure img{width:100%;height:auto;border-radius:10px;border:1px solid var(--line
 figcaption{font-size:.85rem;color:var(--muted);margin-top:4px}
 details{border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin:10px 0}
 summary{cursor:pointer;font-weight:600}
+.days{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}
+.day{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.28);border-radius:12px;padding:8px 12px;text-align:center;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+.day span{display:block;font-size:.8rem;opacity:.9}
+.day b{display:block;font-size:1.15rem;line-height:1.2;margin-top:2px}
+.daytitle{grid-column:1/-1;margin:6px 0 0;font-weight:600;font-size:.95rem}
+.daynote{grid-column:1/-1;margin:2px 0 0;font-size:.85rem;opacity:.9}
 footer{color:var(--muted);font-size:.85rem;text-align:center;padding:10px 16px 40px}
 @media (max-width:520px){
   section{padding:16px 14px}
@@ -96,6 +102,13 @@ footer{color:var(--muted);font-size:.85rem;text-align:center;padding:10px 16px 4
       <div class="fact"><b>Dom 29.11 · 10:00</b><span>Salida (como tarde)</span></div>
       <div class="fact"><b>27 personas + 1 perro</b><span>13 adultos · 14 niños/jóvenes</span></div>
       <div class="fact"><b>≈ 1 h 30 min</b><span>en coche desde Múnich</span></div>
+    </div>
+    <div class="days" aria-label="Cuántos somos cada día">
+      <p class="daytitle">¿Cuántos somos cada día?</p>
+      <div class="day"><span>Viernes 27.11</span><b>27 personas</b></div>
+      <div class="day"><span>Sábado 28.11</span><b>22 personas</b></div>
+      <div class="day"><span>Domingo 29.11</span><b>22 personas</b></div>
+      <p class="daynote">El sábado se van los 4 Djordjevic y Natalia.</p>
     </div>
   </div>
 </header>
@@ -197,7 +210,7 @@ footer{color:var(--muted);font-size:.85rem;text-align:center;padding:10px 16px 4
 
 <section id="comidas">
   <h2>Comidas y cocineros</h2>
-  <p class="lead">Quién cocina cuándo.</p>
+  <p class="lead">Quién cocina cuándo. Somos <b>27</b> el viernes y <b>22</b> el sábado y el domingo (el sábado se van los Djordjevic y Natalia).</p>
   <ul class="timeline">
     <li><span class="when">Viernes · cena</span><span><span class="who">Marta e Isra</span> · pasta</span></li>
     <li><span class="when">Sábado · desayuno</span><span>Cada uno se lo prepara (compra común)</span></li>
