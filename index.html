@@ -103,13 +103,6 @@ footer{color:var(--muted);font-size:.85rem;text-align:center;padding:10px 16px 4
       <div class="fact"><b>27 personas + 1 perro</b><span>13 adultos · 14 niños/jóvenes</span></div>
       <div class="fact"><b>≈ 1 h 30 min</b><span>en coche desde Múnich</span></div>
     </div>
-    <div class="days" aria-label="Cuántos somos cada día">
-      <p class="daytitle">¿Cuántos somos cada día?</p>
-      <div class="day"><span>Viernes 27.11</span><b>27 personas</b></div>
-      <div class="day"><span>Sábado 28.11</span><b>22 personas</b></div>
-      <div class="day"><span>Domingo 29.11</span><b>22 personas</b></div>
-      <p class="daynote">El sábado se van los 4 Djordjevic y Natalia.</p>
-    </div>
   </div>
 </header>
 
@@ -210,15 +203,18 @@ footer{color:var(--muted);font-size:.85rem;text-align:center;padding:10px 16px 4
 
 <section id="comidas">
   <h2>Comidas y cocineros</h2>
-  <p class="lead">Quién cocina cuándo. Somos <b>27</b> el viernes y <b>22</b> el sábado y el domingo (el sábado se van los Djordjevic y Natalia).</p>
-  <ul class="timeline">
-    <li><span class="when">Viernes · cena</span><span><span class="who">Marta e Isra</span> · pasta</span></li>
-    <li><span class="when">Sábado · desayuno</span><span>Cada uno se lo prepara (compra común)</span></li>
-    <li><span class="when">Sábado · comida</span><span><span class="who">Ignacio</span> · cocido</span></li>
-    <li><span class="when">Sábado · cena</span><span><span class="who">Ana y Guille</span> · ensalada para mayores y hot dogs para los niños</span></li>
-    <li><span class="when">Domingo · desayuno</span><span>Cada uno se lo prepara (compra común)</span></li>
-    <li><span class="when">Domingo · comida</span><span><span class="who">Mix</span> · paella</span></li>
-  </ul>
+  <p class="lead">Quién cocina cuándo y para cuántas personas. Los 4 Djordjevic y Natalia se van el sábado por la tarde, después de comer.</p>
+  <div class="tbl"><table class="meals">
+    <thead><tr><th>Cuándo</th><th>Quién cocina</th><th class="num">Personas</th></tr></thead>
+    <tbody>
+      <tr><td><b>Viernes</b><div class="small">Cena</div></td><td><b>Marta e Isra</b><div class="small">pasta</div></td><td class="num"><b style="font-size:1.15rem">27</b></td></tr>
+      <tr><td><b>Sábado</b><div class="small">Desayuno</div></td><td><b>Cada uno</b><div class="small">compra común</div></td><td class="num"><b style="font-size:1.15rem">27</b></td></tr>
+      <tr><td><b>Sábado</b><div class="small">Comida</div></td><td><b>Ignacio</b><div class="small">cocido</div></td><td class="num"><b style="font-size:1.15rem">27</b></td></tr>
+      <tr><td><b>Sábado</b><div class="small">Cena</div></td><td><b>Ana y Guille</b><div class="small">ensalada para mayores, hot dogs para niños</div></td><td class="num"><b style="font-size:1.15rem">22</b></td></tr>
+      <tr><td><b>Domingo</b><div class="small">Desayuno</div></td><td><b>Cada uno</b><div class="small">compra común</div></td><td class="num"><b style="font-size:1.15rem">22</b></td></tr>
+      <tr><td><b>Domingo</b><div class="small">Comida</div></td><td><b>Mix</b><div class="small">paella · invitados: familia Rodrigo (4)</div></td><td class="num"><b style="font-size:1.15rem">26</b><div class="small">22 + 4</div></td></tr>
+    </tbody>
+  </table></div>
   <div class="note"><b>Ojo:</b> los cocineros de las comidas y cenas del sábado y domingo compran sus propios ingredientes. Guardad el tique de la compra para hacer las cuentas allí.</div>
   <p class="small">Al dejar la casa, la cocina tiene que quedar limpia: si no, la casa cobra 45 €/hora de limpieza.</p>
 </section>
