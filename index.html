@@ -295,7 +295,7 @@ footer{color:var(--muted);font-size:.85rem;text-align:center;padding:10px 16px 4
 
   <h3>Cómo se reparte</h3>
   <ul>
-    <li><b>Alquiler:</b> a partes iguales por noche y persona (41,7 € por persona y noche).</li>
+    <li><b>Alquiler:</b> 41,7 € por persona y noche, calculado para las 2 noches previstas de cada uno. La casa cobra lo mismo cada noche, venga quien venga. Por eso quien se va antes paga casa y limpieza por las 2 noches; la tasa turística, en cambio, solo por las noches que duerme.</li>
     <li><b>Limpieza final:</b> por noches, incluido el perro (12,9 € por persona o perro para el fin de semana).</li>
     <li><b>Ropa de cama:</b> 8 € por persona, una vez.</li>
     <li><b>Tasa turística:</b> 3 € por persona y noche, según la ley tirolesa solo a partir del año de nacimiento 2010.</li>
@@ -307,11 +307,11 @@ footer{color:var(--muted);font-size:.85rem;text-align:center;padding:10px 16px 4
   <div class="tbl"><table>
     <thead><tr><th>Familia</th><th class="num">Total</th><th class="num">Anticipo dic. 25</th><th class="num">Pagado nov.</th><th class="num">Saldo</th></tr></thead>
     <tbody>
-<tr><td>Neu Sanchez</td><td class='num'>214,5 €</td><td class='num'>106,2 €</td><td class='num'>114,3 €</td><td class='num'><span class='pill back'>6,0 € a devolver</span></td></tr>
-<tr><td>Benedicto Trueba</td><td class='num'>434,9 €</td><td class='num'>106,2 €</td><td class='num'>334,8 €</td><td class='num'><span class='pill back'>6,0 € a devolver</span></td></tr>
+<tr><td>Neu Sanchez</td><td class='num'>214,5 €</td><td class='num'>106,2 €</td><td class='num'>114,3 €</td><td class='num'><span class='pill zero'>al día</span></td></tr>
+<tr><td>Benedicto Trueba</td><td class='num'>434,9 €</td><td class='num'>106,2 €</td><td class='num'>334,8 €</td><td class='num'><span class='pill zero'>al día</span></td></tr>
 <tr><td>Bravo Lis</td><td class='num'>423,5 €</td><td class='num'>106,2 €</td><td class='num'>331,8 €</td><td class='num'><span class='pill zero'>al día</span></td></tr>
 <tr><td>Morera Lafuente</td><td class='num'>447,8 €</td><td class='num'>115,6 €</td><td class='num'>332,3 €</td><td class='num'><span class='pill zero'>al día</span></td></tr>
-<tr><td>Llopart Licht</td><td class='num'>434,9 €</td><td class='num'>106,2 €</td><td class='num'>334,8 €</td><td class='num'><span class='pill back'>6,0 € a devolver</span></td></tr>
+<tr><td>Llopart Licht</td><td class='num'>434,9 €</td><td class='num'>106,2 €</td><td class='num'>334,8 €</td><td class='num'><span class='pill zero'>al día</span></td></tr>
 <tr><td>Djordjevic</td><td class='num'>371,3 €</td><td class='num'>106,2 €</td><td class='num'>144,0 €</td><td class='num'><span class='pill pay'>121,1 € a pagar</span></td></tr>
 <tr><td>Souto Fernandez</td><td class='num'>220,5 €</td><td class='num'>53,1 €</td><td class='num'>167,4 €</td><td class='num'><span class='pill zero'>al día</span></td></tr>
 <tr><td>Nieto Deliz</td><td class='num'>330,7 €</td><td class='num'>79,6 €</td><td class='num'>251,1 €</td><td class='num'><span class='pill zero'>al día</span></td></tr>
@@ -319,10 +319,6 @@ footer{color:var(--muted);font-size:.85rem;text-align:center;padding:10px 16px 4
     <tfoot><tr><td>Total familias</td><td class="num">2.878,2 €</td><td class="num">779,3 €</td><td class="num">2.010,3 €</td><td class="num"></td></tr></tfoot>
   </table></div>
   <p class="small"><span class="pill pay">a pagar</span> falta por pagar · <span class="pill back">a devolver</span> se devuelve a la familia · <span class="pill zero">al día</span> nada pendiente. Importes redondeados a un decimal.</p>
-  <div class="note"><b>Por qué algunos saldos no están a cero:</b><ul style="margin:4px 0">
-    <li><b>Neu Sánchez, Benedicto Trueba y Llopart Licht (6,0 € a devolver):</b> en noviembre se pagó la tasa turística de un hijo/a que no la paga. Según el contrato solo pagan los nacidos a partir de 2010, así que se devuelven 2 noches × 3 €.</li>
-    <li><b>Djordjevic (121,1 € a pagar):</b> duermen solo la noche del viernes. Para la segunda noche, el grupo les descuenta 57,7 € con lo que sobró del descuento por la familia Rodrigo, que no viene.</li>
-  </ul></div>
   <p class="small">Datos bancarios para pagar o recibir la devolución: por mensaje privado a Israel.</p>
 </section>
 
@@ -355,25 +351,32 @@ footer{color:var(--muted);font-size:.85rem;text-align:center;padding:10px 16px 4
   var mode = DATA.reparto || "persona";
   var fmt = function(x){ return (Math.round(Math.abs(x)*100)/100).toLocaleString("es-ES",{minimumFractionDigits:2,maximumFractionDigits:2}) + " €"; };
   var esc = function(s){ var d=document.createElement("div"); d.textContent=String(s); return d.innerHTML; };
-  var w = {}, wsum = 0;
-  FAM.forEach(function(f){ w[f.fam] = mode==="familia" ? 1 : (mode==="noches" ? f.noches : f.personas); wsum += w[f.fam]; });
-  var paid = {}; FAM.forEach(function(f){ paid[f.fam]=0; });
+  var INV = [{fam:"Rodrigo Pérez", personas:4, noches:4, invitado:true, nota:"solo la comida del domingo (paella)"}];
+  var ALL = FAM.concat(INV);
+  var wt = function(f){ return mode==="familia" ? 1 : (mode==="noches" ? f.noches : f.personas); };
+  var wsum = 0; FAM.forEach(function(f){ wsum += wt(f); });
+  var paid = {}, share = {}; ALL.forEach(function(f){ paid[f.fam]=0; share[f.fam]=0; });
   var total = 0, rows = "";
   DATA.gastos.forEach(function(g,i){
-    total += g.importe; if (paid[g.pagó]===undefined) paid[g.pagó]=0; paid[g.pagó] += g.importe;
-    rows += "<tr><td>"+(i+1)+"</td><td>"+esc(g.concepto)+"</td><td>"+esc(g.pagó)+"</td><td class='num'>"+fmt(g.importe)+"</td></tr>";
+    total += g.importe; if (paid[g.pagó]===undefined){ paid[g.pagó]=0; share[g.pagó]=0; } paid[g.pagó] += g.importe;
+    // participantes: todas las familias + invitados apuntados en ese recibo (p. ej. "invitados":["Rodrigo Pérez"])
+    var part = FAM.slice(); (g.invitados||[]).forEach(function(n){ INV.forEach(function(f){ if (f.fam===n) part.push(f); }); });
+    var s = 0; part.forEach(function(f){ s += wt(f); });
+    part.forEach(function(f){ share[f.fam] += g.importe*wt(f)/s; });
+    var extra = (g.invitados&&g.invitados.length) ? "<div class='small'>+ "+esc(g.invitados.join(", "))+"</div>" : "";
+    rows += "<tr><td>"+(i+1)+"</td><td>"+esc(g.concepto)+extra+"</td><td>"+esc(g.pagó)+"</td><td class='num'>"+fmt(g.importe)+"</td></tr>";
   });
   document.getElementById("g-recibos").innerHTML = rows || "<tr><td colspan='4' class='small'>Todavía no hay recibos.</td></tr>";
   document.getElementById("g-total").textContent = fmt(total);
   document.getElementById("g-unit-label").textContent = mode==="familia" ? "Por familia" : (mode==="noches" ? "Por noche-persona" : "Por persona");
-  document.getElementById("g-unit").textContent = fmt(wsum ? total/wsum : 0);
-  // saldos en céntimos para evitar errores de redondeo
+  document.getElementById("g-unit").textContent = fmt(FAM.length ? share[FAM[0].fam]/wt(FAM[0]) : 0);
   var bal = [], brows = "";
-  FAM.forEach(function(f){
-    var share = wsum ? total*w[f.fam]/wsum : 0, s = paid[f.fam]-share;
+  ALL.forEach(function(f){
+    var s = paid[f.fam]-share[f.fam];
     bal.push({fam:f.fam, c:Math.round(s*100)});
     var pill = s>0.005 ? "<span class='pill back'>recibe "+fmt(s)+"</span>" : (s<-0.005 ? "<span class='pill pay'>paga "+fmt(s)+"</span>" : "<span class='pill zero'>en paz</span>");
-    brows += "<tr><td>"+esc(f.fam)+"</td><td class='num'>"+fmt(paid[f.fam])+"</td><td class='num'>"+fmt(share)+"</td><td class='num'>"+pill+"</td></tr>";
+    var name = esc(f.fam) + (f.invitado ? "<div class='small'>invitados: "+esc(f.nota)+"</div>" : "");
+    brows += "<tr><td>"+name+"</td><td class='num'>"+fmt(paid[f.fam])+"</td><td class='num'>"+fmt(share[f.fam])+"</td><td class='num'>"+pill+"</td></tr>";
   });
   document.getElementById("g-balance").innerHTML = brows;
   // ajustar céntimos de redondeo para que la suma sea 0
