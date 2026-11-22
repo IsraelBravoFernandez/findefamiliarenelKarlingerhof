@@ -83,13 +83,19 @@ summary{cursor:pointer;font-weight:600}
 .daynote{grid-column:1/-1;margin:2px 0 0;font-size:.85rem;opacity:.9}
 .wx{margin-top:14px}
 .hero .wx-title{margin:0 0 6px;font-weight:600;font-size:.95rem}
-.wx-days{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:10px}
-.wx-day{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);border-radius:12px;padding:8px 10px;text-align:center;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
-.wx-day .d{font-size:.8rem;opacity:.9}
-.wx-day .i{font-size:1.6rem;line-height:1.3}
-.wx-day .t{font-weight:700}
-.wx-day .s{font-size:.78rem;opacity:.9}
-.wx-btn{display:inline-block;background:#fff;color:#1f2a2e;text-decoration:none;font-weight:600;padding:8px 14px;border-radius:999px;font-size:.92rem}
+.wx-card[hidden]{display:none}
+.wx-card{text-decoration:none;display:grid;grid-template-columns:repeat(3,1fr);background:#fff;color:#2b2b2b;border-radius:14px;overflow:hidden;box-shadow:0 4px 18px rgba(0,0,0,.25)}
+.wx-col{text-align:center;padding:12px 6px 10px;border-left:1px solid #eee}
+.wx-col:first-child{border-left:0}
+.wx-col .dn{font-size:1.05rem}
+.wx-col .dd{font-size:.85rem;color:#777}
+.wx-col .mx{font-size:2rem;line-height:1.1;margin-top:8px}
+.wx-col .mn{font-size:1.15rem;margin-bottom:4px}
+.wx-col .ic{font-size:2.4rem;line-height:1.2;position:relative;display:inline-block}
+.wx-col .wd{display:block;margin:2px auto 6px;width:22px;height:22px;color:#666}
+.wx-col .row{font-size:.95rem;color:#444;margin-top:4px;white-space:nowrap}
+.cold{color:#3d8fe0}.mild{color:#3aa33a}.warm{color:#e0882f}
+.hero .wx-link{display:inline-block;margin-top:6px;color:#fff;font-size:.75rem;opacity:.8}
 .hero .wx-src{margin:6px 0 0;font-size:.75rem;opacity:.8}
 footer{color:var(--muted);font-size:.85rem;text-align:center;padding:10px 16px 40px}
 @media (max-width:520px){
@@ -115,9 +121,8 @@ footer{color:var(--muted);font-size:.85rem;text-align:center;padding:10px 16px 4
     </div>
     <div class="wx">
       <p class="wx-title">El tiempo en Achenkirch</p>
-      <div class="wx-days" id="wx-days" hidden></div>
-      <a class="wx-btn" href="https://app.wetteronline.de/U13Q/deDETeilen" target="_blank" rel="noopener">Ver la previsión en WetterOnline →</a>
-      <p class="wx-src" id="wx-src" hidden>Previsión: Open-Meteo, se actualiza al abrir la página.</p>
+      <a class="wx-card" id="wx-card" href="https://app.wetteronline.de/U13Q/deDETeilen" target="_blank" rel="noopener" aria-label="Previsión del tiempo; abre WetterOnline" hidden></a>
+      <a class="wx-link" id="wx-link" href="https://app.wetteronline.de/U13Q/deDETeilen" target="_blank" rel="noopener">Ver la previsión en WetterOnline →</a>
     </div>
   </div>
 </header>
@@ -461,25 +466,35 @@ footer{color:var(--muted);font-size:.85rem;text-align:center;padding:10px 16px 4
 <footer>Última actualización: 15.11.2026 · Organiza: Israel · Cualquier duda, escribid al grupo.</footer>
 <script>
 (function(){
-  // Previsión para el fin de semana (Open-Meteo, sin clave). Si falla, solo queda el enlace a WetterOnline.
-  var url = "https://api.open-meteo.com/v1/forecast?latitude=47.51&longitude=11.71&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,snowfall_sum&timezone=Europe%2FVienna&start_date=2026-11-27&end_date=2026-11-29";
-  var dias = ["Viernes 27","Sábado 28","Domingo 29"];
+  // Previsión para el fin de semana (Open-Meteo, sin clave). Si falla, se ve solo el enlace a WetterOnline.
+  var url = "https://api.open-meteo.com/v1/forecast?latitude=47.51&longitude=11.71&daily=weather_code,temperature_2m_max,temperature_2m_min,sunshine_duration,precipitation_probability_max,wind_direction_10m_dominant&timezone=Europe%2FVienna&start_date=2026-11-27&end_date=2026-11-29";
+  var dias = [["Viernes","27.11."],["Sábado","28.11."],["Domingo","29.11."]];
   var wmo = function(c){
-    if (c===0) return ["☀️","despejado"]; if (c<=2) return ["🌤️","poco nuboso"]; if (c===3) return ["☁️","nublado"];
-    if (c===45||c===48) return ["🌫️","niebla"]; if (c>=51&&c<=57) return ["🌦️","llovizna"]; if (c>=61&&c<=67) return ["🌧️","lluvia"];
-    if (c>=71&&c<=77) return ["🌨️","nieve"]; if (c>=80&&c<=82) return ["🌦️","chubascos"]; if (c===85||c===86) return ["🌨️","chubascos de nieve"];
-    if (c>=95) return ["⛈️","tormenta"]; return ["🌡️",""]; };
+    if (c===0) return "☀️"; if (c<=2) return "🌤️"; if (c===3) return "☁️";
+    if (c===45||c===48) return "🌫️"; if (c>=51&&c<=57) return "🌦️"; if (c>=61&&c<=67) return "🌧️";
+    if (c>=71&&c<=77) return "🌨️"; if (c>=80&&c<=82) return "🌦️"; if (c===85||c===86) return "🌨️";
+    if (c>=95) return "⛈️"; return "🌡️"; };
+  var cls = function(x){ return x<=0 ? "cold" : (x<15 ? "mild" : "warm"); };
+  var num = function(v){ return (v===null||v===undefined||isNaN(v)) ? null : v; };
   if (!window.fetch) return;
   fetch(url).then(function(r){ if(!r.ok) throw 0; return r.json(); }).then(function(j){
     var d = j && j.daily; if (!d || !d.time || d.time.length < 3) return;
     var h = "";
     for (var i=0;i<3;i++){
-      var w = wmo(d.weather_code[i]), sn = d.snowfall_sum[i], pr = d.precipitation_sum[i];
-      var extra = sn>0 ? Math.round(sn)+" cm nieve" : (pr>0 ? Math.round(pr)+" mm" : "seco");
-      h += "<div class='wx-day'><div class='d'>"+dias[i]+"</div><div class='i' aria-hidden='true'>"+w[0]+"</div><div class='t'>"+Math.round(d.temperature_2m_min[i])+"° / "+Math.round(d.temperature_2m_max[i])+"°</div><div class='s'>"+w[1]+" · "+extra+"</div></div>";
+      var mx = Math.round(d.temperature_2m_max[i]), mn = Math.round(d.temperature_2m_min[i]);
+      var sun = num(d.sunshine_duration && d.sunshine_duration[i]), pp = num(d.precipitation_probability_max && d.precipitation_probability_max[i]);
+      var wd = num(d.wind_direction_10m_dominant && d.wind_direction_10m_dominant[i]);
+      // la flecha apunta hacia donde sopla el viento
+      var arrow = wd===null ? "" : "<svg class='wd' viewBox='0 0 24 24' aria-label='viento' style='transform:rotate("+((wd+180)%360)+"deg)'><path d='M12 3 L18 20 L12 16 L6 20 Z' fill='none' stroke='currentColor' stroke-width='1.6' stroke-linejoin='round'/></svg>";
+      h += "<div class='wx-col'><div class='dn'>"+dias[i][0]+"</div><div class='dd'>"+dias[i][1]+"</div>"
+         + "<div class='mx "+cls(mx)+"'>"+mx+"°</div><div class='mn "+cls(mn)+"'>"+mn+"°</div>"
+         + "<div class='ic' aria-hidden='true'>"+wmo(d.weather_code[i])+"</div>"+arrow
+         + (sun===null ? "" : "<div class='row'>☀ "+Math.round(sun/3600)+" h</div>")
+         + (pp===null ? "" : "<div class='row'>💧 "+Math.round(pp)+" %</div>")
+         + "</div>";
     }
-    var box = document.getElementById("wx-days"); box.innerHTML = h; box.hidden = false;
-    document.getElementById("wx-src").hidden = false;
+    var card = document.getElementById("wx-card"); card.innerHTML = h; card.hidden = false;
+    var l = document.getElementById("wx-link"); l.textContent = "Fuente: Open-Meteo · toca la tarjeta para ver WetterOnline";
   }).catch(function(){});
 })();
 </script>
