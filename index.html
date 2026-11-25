@@ -346,7 +346,7 @@ footer{color:var(--muted);font-size:.85rem;text-align:center;padding:10px 16px 4
 
 <section id="gastos">
   <h2>Gastos compartidos</h2>
-  <p class="lead">Compras y comidas que alguien adelantó para todos. Cada familia tiene un representante y los gastos se reparten a partes iguales entre las 8 familias. Al final se calcula quién paga a quién.</p>
+  <p class="lead">Compras y comidas que alguien adelantó para todos. Cada familia tiene un representante. Los gastos se reparten por persona (niños y adultos cuentan igual), así que a cada familia le toca según cuántos miembros tiene. Al final se calcula quién paga a quién.</p>
   <div class="grid2" style="margin-bottom:6px">
     <div class="box"><div class="small">Total gastado</div><b id="g-total" style="font-size:1.3rem">0,00 €</b></div>
     <div class="box"><div class="small" id="g-unit-label">Por familia</div><b id="g-unit" style="font-size:1.3rem">0,00 €</b></div>
@@ -370,7 +370,7 @@ footer{color:var(--muted);font-size:.85rem;text-align:center;padding:10px 16px 4
 
 <script>
 (function(){
-  var DATA = {"representantes": ["Carolina Souto", "Jose Miguel Nieto", "Israel Bravo", "Llorenç Llopart", "Lucas Neu", "Guille Benedicto", "Ignacio Morera", "Branko Djordjevic"], "caja": {"guarda": "Israel Bravo", "importe": 23.97, "para": "Paella"}, "gastos": []};
+  var DATA = {"representantes": ["Carolina Souto", "Jose Miguel Nieto", "Israel Bravo", "Llorenç Llopart", "Lucas Neu", "Guille Benedicto", "Ignacio Morera", "Branko Djordjevic"], "caja": {"guarda": "Israel Bravo", "importe": 23.97, "para": "Paella"}, "gastos": [{"concepto": "Compras Metro (desayunos, bebida y varios)", "fecha": "25.11.26", "pagó": "Branko Djordjevic", "importe": 159.89}], "miembros": {"Carolina Souto": 2, "Jose Miguel Nieto": 3, "Israel Bravo": 4, "Llorenç Llopart": 4, "Lucas Neu": 2, "Guille Benedicto": 4, "Ignacio Morera": 4, "Branko Djordjevic": 4}};
   var REP = DATA.representantes;           // un representante por familia
   var CAJA = DATA.caja || {};              // dinero de la caja del grupo que guarda un representante
   var n = REP.length;
